@@ -23,4 +23,13 @@ export default createVuetify({
       },
     },
   },
+  // breakpoint: {
+  //   thresholds: {
+  //     xs: 650,
+  //     sm: 1297,
+  //     md: 1383,
+  //     lg: 1457,
+  //     xl: 1920
+  //   },
+  // },
 })
