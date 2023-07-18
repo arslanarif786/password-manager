@@ -1,5 +1,6 @@
 <template>
     Signup
+    
 </template>
 
 <script setup>
