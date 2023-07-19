@@ -136,7 +136,7 @@
   
       const inputValidations = async () => {
         const { valid } = await myForm.value.validate()
-        if (!valid) alert('Form is not valid')
+        if (valid) alert('Form is valid')
       }
   
       return {
