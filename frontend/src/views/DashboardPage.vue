@@ -1,6 +1,5 @@
 <template>
-    Dashboard
-    <!-- <MainTable /> -->
+    <MainTable />
 </template>
 
 <script setup>
