@@ -20,6 +20,7 @@
           </span>
         </h1>
       </div>
+      <div>
       <v-sheet
         :width="$vuetify.display.lg ? '450' : '360'"
         class="custom-spacing custom-radius px-15 py-12"
@@ -71,6 +72,17 @@
           <div class="mt-3 mb-4 txt14 text-right">Back to Login</div>
         </router-link>
       </v-sheet>
+      <div class="text-center">
+      <v-btn
+            v-if="!$vuetify.display.lg"
+            @click="$router.push({path: '/'})"
+            variant="outlined"
+            color="deep-orange"
+            class="mt-8 text-capitalize custom-360"
+            >Go to Home</v-btn
+          >
+          </div>
+      </div>
       <div class="text-white custom-main-title">
         <h1 class="font-avenir txt60">
           Password
@@ -86,6 +98,14 @@
         <div class="txt16 custom-width-title">
           Lets create an account in our system to register yourself.
         </div>
+        <v-btn
+            @click="$router.push({path: '/'})"
+            block
+            variant="outlined"
+            color="deep-orange"
+            class="mt-5 text-capitalize"
+            >Go to Home</v-btn
+          >
       </div>
     </div>
   </template>
@@ -95,6 +115,7 @@
   import rules from "../constants/validation-rules.js"
   import API from "../services/API"
   import { useRoute } from "vue-router"
+  import useToast from '@/plugins/useToast.js'
   export default {
     setup() {
       const loader = ref(false)
@@ -170,33 +191,35 @@
   
       const signupRequest = () => {
         inputValidations()
-        // set loader true
+        loader.value = true
         const payload = {
-          firstName: inputList.value[0].model,
-          lastName: inputList.value[1].model,
+          name: inputList.value[0].model + " " + inputList.value[1].model,
           email: inputList.value[2].model,
           password: inputList.value[3].model
         }
         console.log('ready signup payload ==============', payload)
-        API.post("signup", payload)
+        API.post("create_account", payload)
           .then(() => {
             // show success message while snackbar
-            // route to signup page
+            useToast("Account created Successfully!", "success")
+            // route to login page
+            router.push({path: "/login"});
           })
           .catch(() => {
             // show error message
+            useToast("Something went wrong", "error")
           })
           .finally(() => {
-            // set loader false
+            loader.value = false
           })
       }
   
       const inputValidations = async () => {
-        const { valid } = await myForm.value.validate()
-        if (valid) {
-          alert('Form is valid')
-        }
-        else if(inputList.value[3].model !== inputList.value[4].model) {
+        // const { valid } = await myForm.value.validate()
+        // if (valid) {
+        //   alert('Form is valid')
+        // }
+        if(inputList.value[3].model !== inputList.value[4].model) {
           alert('Password did not match')
         }
       }
@@ -217,6 +240,9 @@
   <style scoped>
   :deep .v-field__field:focus-within {
     background-color: #e0e0e0 !important;
+  }
+  .custom-360 {
+    width: 240px;
   }
   </style>
   

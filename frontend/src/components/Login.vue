@@ -56,6 +56,15 @@
             Create new account
           </div>
         </router-link>
+        <v-btn
+            v-if="!$vuetify.display.lg"
+            @click="$router.push({path: '/'})"
+            block
+            variant="outlined"
+            color="deep-orange"
+            class="mt-16 text-capitalize"
+            >Go to Home</v-btn
+          >
       </v-sheet>
       <div class="text-white custom-main-title">
         <h1 class="font-avenir txt60">
@@ -67,6 +76,14 @@
           save, manage and use passwords across different online services. Many
           online services require a username and password to create an account and
           gain access to a specific service.
+          <v-btn
+            @click="$router.push({path: '/'})"
+            block
+            variant="outlined"
+            color="deep-orange"
+            class="mt-5 text-capitalize"
+            >Go to Home</v-btn
+          >
         </div>
       </div>
     </div>
@@ -74,14 +91,17 @@
   
   <script>
   import { ref } from "vue";
-  import rules from "../constants/validation-rules.js"
-  import API from "../services/API"
+  import rules from "@/constants/validation-rules.js"
+  import API from "@/services/API"
   import { useRoute } from "vue-router"
+  import { useRouter } from "vue-router"
+  import useToast from '@/plugins/useToast.js'
   export default {
     setup() {
       const loader = ref(false)
       const myForm = ref('')
       const route = useRoute()
+      const router = useRouter()
       const inputList = ref([
         {
           name: "email",
@@ -113,36 +133,41 @@
       ])
   
       const loginRequest = () => {
-        // inputValidations()
-        // set loader true
+        inputValidations()
+        loader.value = true
         const payload = {
           email: inputList.value[0].model,
           password: inputList.value[1].model
         }
         console.log('ready login payload ==============', payload)
         API.post("login", payload)
-          .then(() => {
+          .then((response) => {
             // set local storage user keys
+            // localStorage.setItem('username', JSON.stringify(response.data.token))
             // show success message while snackbar
+            useToast("Login successfully!", "success")
             // route to dashboard page
+            router.push({path: "/dashboard"});
           })
-          .catch(() => {
+          .catch((error) => {
             // show error message
+            useToast("Something went wrong", "error")
           })
           .finally(() => {
-            // set loader false
+            loader.value = false
           })
       }
   
       const inputValidations = async () => {
-        const { valid } = await myForm.value.validate()
-        if (valid) alert('Form is valid')
+        // const { valid } = await myForm.value.validate()
+        // if (valid) alert('Form is valid')
       }
   
       return {
         loader,
         myForm,
         route,
+        router,
         inputList,
         loginRequest
       }
