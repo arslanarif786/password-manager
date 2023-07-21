@@ -1,7 +1,10 @@
 import axios from 'axios'
 
 // import { useAuthStore } from 'src/stores/auth.store';
-const appBaseURL = process.env.appBaseURL;
+const appBaseURL = import.meta.env.VITE_API_URL
+
+const token = localStorage.getItem('token')
+// const deviceId = '1234567890'
 
 
 class API {
@@ -17,8 +20,8 @@ class API {
       method: method,
       headers: {
         "Accept": 'application/json',
-        "Authorization": `Bearer ${authStore.authToken}`,
-        "Device-Id": authStore.deviceId,
+        "Authorization": `Bearer ${token}`,
+        // "Device-Id": deviceId,
         "Device-Type": 'web'
       },
     };
