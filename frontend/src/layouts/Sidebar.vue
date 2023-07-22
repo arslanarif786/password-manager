@@ -6,16 +6,17 @@
             Password <span class="text-deep-orange font-avenir"> Manager </span>
         </h1>
         <v-list>
-          <!-- <v-list-item
-            prepend-icon="mdi-account-box"
-            title="Home"
-            class="cursor-pointer"
-          ></v-list-item> -->
           <v-list-item
+            prepend-icon="mdi-home"
+            title="Home"
+            class="cursor-pointer text-white"
+            @click="$router.push({path: '/'})"
+          ></v-list-item>
+          <!-- <v-list-item
             prepend-icon="mdi-view-dashboard"
             title="Dashboard"
             class="cursor-pointer text-white"
-          ></v-list-item>
+          ></v-list-item> -->
         </v-list>
 
         <template v-slot:append>
