@@ -115,12 +115,14 @@
   import rules from "../constants/validation-rules.js"
   import API from "../services/API"
   import { useRoute } from "vue-router"
+  import { useRouter } from "vue-router"
   import useToast from '@/plugins/useToast.js'
   export default {
     setup() {
       const loader = ref(false)
       const myForm = ref('')
       const route = useRoute()
+      const router = useRouter()
       const inputList = ref([
         {
           name: "firstName",
@@ -228,6 +230,7 @@
         loader,
         myForm,
         route,
+        router,
         inputList,
         signupRequest
       }
