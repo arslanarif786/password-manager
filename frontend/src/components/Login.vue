@@ -96,6 +96,7 @@
   import { useRoute } from "vue-router"
   import { useRouter } from "vue-router"
   import useToast from '@/plugins/useToast.js'
+import { load } from "webfontloader";
   export default {
     setup() {
       const loader = ref(false)
@@ -133,8 +134,18 @@
       ])
   
       const loginRequest = () => {
-        inputValidations()
+        // check validations
+        if(!inputList.value[0].model) {
+          useToast("Email is required", "error")
+          return
+        }
+        if(!inputList.value[1].model) {
+          useToast("Password is required", "error")
+          return
+        }
+        // button loader is ON
         loader.value = true
+        
         const payload = {
           email: inputList.value[0].model,
           password: inputList.value[1].model
@@ -142,25 +153,20 @@
         console.log('ready login payload ==============', payload)
         API.post("login", payload)
           .then((response) => {
-            // set local storage user keys
-            // localStorage.setItem('username', JSON.stringify(response.data.token))
-            // show success message while snackbar
-            useToast("Login successfully!", "success")
+            // set TOKEN localinto  storage 
+            localStorage.setItem('token', JSON.stringify(response.token))
+            // show success message in the snackbar
+            useToast(response.message, "success")
             // route to dashboard page
             router.push({path: "/dashboard"});
           })
           .catch((error) => {
-            // show error message
-            useToast("Something went wrong", "error")
+            // show error message in the snackbar
+            useToast(error.message, "error")
           })
           .finally(() => {
             loader.value = false
           })
-      }
-  
-      const inputValidations = async () => {
-        // const { valid } = await myForm.value.validate()
-        // if (valid) alert('Form is valid')
       }
   
       return {

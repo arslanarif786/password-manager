@@ -3,8 +3,8 @@
     <Sidebar />
     <v-main class="bg-white">
       <div class="text-right mt-5 mr-4">
-        <v-avatar class="text-white secondary-color">
-          <span class="text-h6">CJ</span>
+        <v-avatar color="text-white secondary-color">
+          <v-icon icon="mdi-account-circle" color="white"></v-icon>
         </v-avatar>
       </div>
       <MainTable />
