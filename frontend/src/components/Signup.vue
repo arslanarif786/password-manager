@@ -192,38 +192,52 @@
       ])
   
       const signupRequest = () => {
-        inputValidations()
+        // check validations
+        if(!inputList.value[0].model) {
+          useToast("First name is required", "error")
+          return
+        }
+        if(!inputList.value[1].model) {
+          useToast("Last name is required", "error")
+          return
+        }
+        if(!inputList.value[2].model) {
+          useToast("Email is required", "error")
+          return
+        }
+        if(!inputList.value[3].model) {
+          useToast("Password is required", "error")
+          return
+        }
+        if(inputList.value[3].model !== inputList.value[4].model) {
+          useToast("Password did not match", "error")
+          return
+        }
+        
+        // button loader is ON
         loader.value = true
+        
         const payload = {
           name: inputList.value[0].model + " " + inputList.value[1].model,
           email: inputList.value[2].model,
           password: inputList.value[3].model
         }
         console.log('ready signup payload ==============', payload)
+
         API.post("create_account", payload)
-          .then(() => {
-            // show success message while snackbar
-            useToast("Account created Successfully!", "success")
+          .then((res) => {
+            // show success message in snackbar
+            useToast(res.messae, "success")
             // route to login page
             router.push({path: "/login"});
           })
-          .catch(() => {
+          .catch((error) => {
             // show error message
-            useToast("Something went wrong", "error")
+            useToast(error.messae, "error")
           })
           .finally(() => {
             loader.value = false
           })
-      }
-  
-      const inputValidations = async () => {
-        // const { valid } = await myForm.value.validate()
-        // if (valid) {
-        //   alert('Form is valid')
-        // }
-        if(inputList.value[3].model !== inputList.value[4].model) {
-          alert('Password did not match')
-        }
       }
   
       return {

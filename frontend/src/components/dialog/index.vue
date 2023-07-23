@@ -31,8 +31,10 @@
                 <v-text-field
                   v-model="cardObject.password"
                   label="Password*"
-                  type="password"
                   variant="solo"
+                  :type="visible ? 'text' : 'password'"
+                  :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                  @click:append-inner="visible = !visible"
                   required
                 ></v-text-field>
               </v-col>
@@ -53,6 +55,7 @@
             v-if="dialogKey == 'add'"
             color="deep-orange"
             variant="tonal"
+            :loading="loader"
             @click="AddNewAccount"
             class="text-capitalize mr-8 mb-2"
           >
@@ -62,6 +65,7 @@
             v-else-if="dialogKey == 'edit'"
             color="deep-orange"
             variant="tonal"
+            :loading="loader"
             @click="updateAccount(card.password_id)"
             class="text-capitalize mr-8 mb-2"
           >
@@ -76,15 +80,14 @@
 <script setup>
 import { watch } from "vue";
 import { ref } from "vue";
-import rules from "@/constants/validation-rules.js";
-import API from "@/services/API";
 import { useRouter } from "vue-router";
-import useToast from "@/plugins/useToast.js";
 
-const props = defineProps(["dialog", "dialogKey", "dialogAdd", "card"]);
+const props = defineProps(["dialog", "dialogKey", "card", "buttonLoader"]);
 const emit = defineEmits(["close-dialog", "add-new-account", "update-account"]);
 const handleDialog = ref(false);
 const router = useRouter();
+const visible = ref(false)
+const loader = ref(false)
 const cardObject = ref({
   platform: "",
   username: "",
@@ -95,11 +98,13 @@ watch(
   props,
   (newValue) => {
     handleDialog.value = newValue.dialog;
-    console.log('watcher ===== ', newValue.value)
+    loader.value = newValue.buttonLoader;
+    console.log('watcher dialog >>>> ', newValue)
     if (newValue.card) {
       cardObject.value.platform = newValue.card.platform;
       cardObject.value.username = newValue.card.username;
       cardObject.value.password = newValue.card.password;
+      cardObject.value['password_id'] = newValue.card.password_id;
     }
   },
   { immediate: true }
@@ -109,12 +114,14 @@ function closeDialog() {
   emit("close-dialog", false);
 }
 const AddNewAccount = () => {
-  console.log("addnewAccount");
-  emit("add-new-account", { cardObj: cardObject.value, key: false });
+  console.log("addnewAccount==");
+  loader.value = true;
+  emit("add-new-account", { cardObj: cardObject.value, key: false, loader: loader.value });
 };
 const updateAccount = (id) => {
-  console.log("updateAccount");
-  emit("update-account", { cardId: id, cardObj: cardObject.value, key: false });
+  console.log("updateAccount==");
+  loader.value = true;
+  emit("update-account", { cardId: id, cardObj: cardObject.value, key: false, loader: loader.value });
 };
 </script>
 

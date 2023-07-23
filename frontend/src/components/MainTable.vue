@@ -2,6 +2,7 @@
   <Dialog
     :dialog="dialog"
     :dialogKey="add"
+    :buttonLoader="buttonLoader"
     @close-dialog="dialog = false"
     @add-new-account="addNewAccount"
   />
@@ -16,12 +17,24 @@
       add new account
     </v-btn>
   </div>
-  <div v-for="(item, index) in cards" :key="index" class="d-flex">
-    <Card
-      :card="item"
-      @delete-card="deleteAccount"
-      @update-card="updateAccount"
-    />
+  <div
+    v-if="loader"
+    class="d-flex justify-center align-center"
+    style="height:65vh">
+    <v-progress-circular
+      indeterminate
+      size="50"
+      color="deep-orange"
+    ></v-progress-circular>
+  </div>
+  <div v-else>
+    <div v-for="(item, index) in cards" :key="index" class="d-flex">
+      <Card
+        :card="item"
+        @delete-card="deleteAccount"
+        @update-card="updateAccount"
+      />
+    </div>
   </div>
 </template>
 
@@ -40,22 +53,84 @@ export default {
     Dialog
   },
   setup() {
-    const cards = ref([1, 2, 3, 4, 5, 6, 7, 8, 9, 0]);
+    const cards = ref([
+      {
+        platform: 'Google',
+        username: 'ahmad2@gmail.com',
+        password: 'wertyuvbnm567',
+        password_id: '1',
+      },
+      {
+        platform: 'Google',
+        username: 'test@gmail.com',
+        password: 'wertyuvbnm000',
+        password_id: '2',
+      },
+      {
+        platform: 'Github',
+        username: 'test10@gmail.com',
+        password: 'ikdyuvbnm520',
+        password_id: '3'
+      },
+      {
+        platform: 'Facebook',
+        username: 'test@gmail.com',
+        password: 'wertyuvbnm567',
+        password_id: '4'
+      },
+      {
+        platform: 'Google',
+        username: 'test000@gmail.com',
+        password: '7h8yuvbnm56hl',
+        password_id: '5'
+      },
+      {
+        platform: 'Google',
+        username: 'test011@gmail.com',
+        password: '7h8yuvbnm56hl',
+        password_id: '6'
+      },
+      {
+        platform: 'Google',
+        username: 'test007@gmail.com',
+        password: '7h8yuvbnm087l',
+        password_id: '7'
+      },
+      {
+        platform: 'Google',
+        username: 'test8@gmail.com',
+        password: '7h8yuvbnm56hl',
+        password_id: '8'
+      },
+      {
+        platform: 'Google',
+        username: 'test5@gmail.com',
+        password: '7h8yuvbnm56hl',
+        password_id: '9'
+      },
+      {
+        platform: 'Google',
+        username: 'test1@gmail.com',
+        password: '7h8yuvbnhhihl',
+        password_id: '10'
+      },
+    ]);
     const loader = ref(true);
     const route = useRoute();
     const router = useRouter();
     const dialog = ref(false);
     const add = ref("add");
+    const buttonLoader = ref(false)
 
     const getAllAccounts = () => {
       API.get("get_all_password")
         .then((res) => {
-          // assign data to cards array
-          // cards.value = res.data
+          // assign data to cards Array
+          cards.value = res.data
         })
         .catch(() => {
           // show error message
-          useToast("Something went wrong", "error");
+          useToast(error?.message ? error.message : "Something went wrong", "error");
         })
         .finally(() => {
           loader.value = false;
@@ -66,38 +141,54 @@ export default {
       console.log("deleted object ===", object);
       getAllAccounts();
       useToast("Account deleted successfully", "success");
+      
+    //   let indexItem;
+    //   cards.value.filter((ele, index) => {
+    //     ele.password_id == object.cardId
+    //     indexItem = index
+    //   })
+    //   cards.value.splice(indexItem, 1)
     }
 
     const addNewAccount = (payload) => {
-      API.post(`create_password`, payload.cardObject)
+      API.post(`create_password`, payload.cardObj)
         .then((res) => {
-          console.log("added new object ===", object);
-          // console.log('res.data added new === ', res.data)
-          // add in cards array
-          getAllAccounts();
-          useToast("Account added successfully", "success");
+          console.log("added new object ===", res);
+          // add in cards Array,, state updated here
+          cards.value.unshift(payload.cardObj)
+          useToast(res.message, "success");
         })
         .catch((err) => {
           // show error message
-          useToast(error, "error");
+          useToast(err?.message ? err?.message : "New account did not add", "error");
         })
         .finally(() => {
           dialog.value = payload.key;
+          buttonLoader.value = false
         });
     };
 
     function updateAccount(object) {
-      console.log("updated object ===", object);
-      getAllAccounts();
-      useToast("Account updated successfully", "success");
+      console.log("updated object ====", object);
+      // state updated here
+      cards.value.map((element, index) => {
+        if(element.password_id === object.cardId) {
+            cards.value[index] = object.cardObj;
+        }
+      });
+      useToast("Account updated successfully", "success");  
     }
 
     onMounted(() => {
-      getAllAccounts();
+      setTimeout(() => {
+        loader.value = false
+      }, 1000);
+      // getAllAccounts();
     });
 
     return {
       loader,
+      buttonLoader,
       cards,
       add,
       dialog,

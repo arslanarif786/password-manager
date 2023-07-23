@@ -3,7 +3,7 @@ import axios from 'axios'
 // import { useAuthStore } from 'src/stores/auth.store';
 const appBaseURL = import.meta.env.VITE_API_URL
 
-const token = localStorage.getItem('token')
+const token = JSON.parse(localStorage.getItem('token'))
 // const deviceId = '1234567890'
 
 
@@ -22,7 +22,7 @@ class API {
         "Accept": 'application/json',
         "Authorization": `Bearer ${token}`,
         // "Device-Id": deviceId,
-        "Device-Type": 'web'
+        // "Device-Type": 'web'
       },
     };
 

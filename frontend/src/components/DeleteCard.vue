@@ -13,6 +13,7 @@
           <v-btn
             color="red"
             variant="flat"
+            :loading="loader"
             @click="handleAccount(card.password_id)"
           >
             Yes
@@ -26,13 +27,15 @@
 <script setup>
 import { watch } from "vue";
 import { ref } from "vue";
-const props = defineProps(["dialog", "card"]);
+const props = defineProps(["dialog", "card", "buttonLoader"]);
 const emit = defineEmits(["handle-delete"]);
 const handleDialog = ref(false);
+const loader = ref(false)
 watch(
   props,
   (newValue) => {
     handleDialog.value = newValue.dialog;
+    loader.value = newValue.buttonLoader;
   },
   { immediate: true }
 );
@@ -41,6 +44,7 @@ function closeDialog() {
 }
 // attach handle account API here
 function handleAccount(id) {
-  emit("handle-delete", { cardId: id, key: false });
+  loader.value = true;
+  emit("handle-delete", { cardId: id, key: false, loader: loader.value });
 }
 </script>
