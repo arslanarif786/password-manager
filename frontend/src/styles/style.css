@@ -12,7 +12,7 @@ body {
 }
 
 .font-symbol {
-    font-family: 'Symbol' !important
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif !important
 }
 
 .font-sans-serif {
@@ -22,18 +22,6 @@ body {
 .font-main-title {
     font-family: 'Lucida Handwriting' !important
 }
-
-h1 {}
-
-h2 {}
-
-h3 {}
-
-h4 {}
-
-h5 {}
-
-h6 {}
 
 .custom-radius {
     border-radius: 6px !important;
