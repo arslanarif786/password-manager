@@ -227,7 +227,7 @@
         API.post("create_account", payload)
           .then((res) => {
             // show success message in snackbar
-            useToast(res.messae, "success")
+            useToast(res.message, "success")
             // route to login page
             router.push({path: "/login"});
           })

@@ -6,7 +6,7 @@
     <h1 v-else-if="$vuetify.display.xs" class="text-white mt-3 ml-7 custom-text-size font-symbol">
         PS<span class="text-deep-orange font-avenir">Manager</span>
     </h1>
-    <div v-if="token" class="text-white mt-6 mr-7 d-flex">
+    <div v-if="!token" class="text-white mt-6 mr-7 d-flex">
       <span
         class="mr-6 cursor-pointer custom-primary-hover"
         @click="$router.push({ path: '/login' })"
