@@ -101,8 +101,8 @@ watch(
     loader.value = newValue.buttonLoader;
     console.log('watcher dialog >>>> ', newValue)
     if (newValue.card) {
-      cardObject.value.platform = newValue.card.platform;
-      cardObject.value.username = newValue.card.username;
+      cardObject.value.platform = newValue.card.platform_name;
+      cardObject.value.username = newValue.card.account_name;
       cardObject.value.password = newValue.card.password;
       cardObject.value['password_id'] = newValue.card.password_id;
     }
