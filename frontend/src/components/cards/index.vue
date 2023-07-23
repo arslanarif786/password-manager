@@ -23,9 +23,9 @@
           <img :src="google" alt="" style="height: 100%" />
         </span>
         <div class="mx-10 font-weight-bold" style="width: 80px">
-          {{ card.platform }}
+          {{ card.platform_name }}
         </div>
-        <div class="mx-10" style="width: 170px">{{ card.username }}</div>
+        <div class="mx-10" style="width: 170px">{{ card.account_name }}</div>
         <v-text-field
           hide-details
           flat
@@ -61,9 +61,9 @@
           <span class="icon-chip mt-7 mx-4">
             <img :src="google" alt="" style="height: 100%" />
           </span>
-          <div class="pt-3">
-            <div class="font-weight-bold">{{ card.platform }}</div>
-            <div class="">{{ card.username }}</div>
+          <div class="pt-3" :class="$vuetify.display.sm ? 'ml-2' : ''">
+            <div class="font-weight-bold">{{ card.platform_name }}</div>
+            <div class="">{{ card.account_name }}</div>
             <v-text-field
               hide-details
               flat
@@ -100,6 +100,7 @@
 <script>
 import { ref } from "vue";
 import Dialog from "../dialog/index.vue";
+import axios from "axios";
 import DeleteAccount from "../DeleteCard.vue";
 import google from "@/assets/images/google.png";
 import API from "@/services/API";
@@ -115,16 +116,16 @@ export default {
     const dialog = ref(false);
     const deleteRowDialog = ref(false);
     const edit = ref("edit");
-    const buttonLoader = ref(false);
+    const buttonLoader = ref(false)
     const password = ref({
       model: "",
       type: "password",
       visible: false,
     });
     function deleteAccount(object) {
-      console.log("delete payload id >>>", object.cardId);
+      console.log('delete payload id >>>', object.cardId)
 
-      API.delete(`delete_password/${object.cardId}`)
+      API.delete(`delete_password/?password_id=${object.cardId}`)
         .then((res) => {
           // update cards array after deletion
           emit("delete-card", object.cardId);
@@ -135,27 +136,42 @@ export default {
         })
         .finally(() => {
           deleteRowDialog.value = object.key;
-          buttonLoader.value = false;
+          buttonLoader.value = false
         });
     }
 
-    const updateAccount = (payload) => {
-      console.log("get update payload >>>", payload);
+    function updateAccount(payload) {
+      console.log('get update payload >>>', payload.cardObj)
+      let data = JSON.stringify(payload.cardObj);
+      const token = JSON.parse(localStorage.getItem('token'))
+      const appBaseURL = import.meta.env.VITE_API_URL
 
-      API.put(`update_password/${payload.cardId}`, payload.cardObject)
-        .then((res) => {
-          // update cards array
-          emit("update-card", payload);
+        let config = {
+          method: 'put',
+          maxBodyLength: Infinity,
+          url: `${appBaseURL}update_password/?password_id=${payload.cardId}`,
+          headers: { 
+            'Content-Type': 'application/json', 
+            'Authorization': `Bearer ${token}`,
+          },
+          data : data
+        };
+
+        axios.request(config)
+        .then((response) => {
+          console.log(JSON.stringify(response.data));
+          emit("update-card", payload)
         })
-        .catch((err) => {
-          // show error message
+        .catch((error) => {
+          console.log(error);
           useToast(error, "error");
         })
         .finally(() => {
           dialog.value = payload.key;
-          buttonLoader.value = false;
-        });
-    };
+          buttonLoader.value = false
+      });
+
+    }
     return {
       dialog,
       buttonLoader,

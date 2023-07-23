@@ -55,62 +55,62 @@ export default {
   setup() {
     const cards = ref([
       {
-        platform: 'Google',
-        username: 'ahmad2@gmail.com',
+        platform_name: 'Google',
+        account_name: 'ahmad2@gmail.com',
         password: 'wertyuvbnm567',
         password_id: '1',
       },
       {
-        platform: 'Google',
-        username: 'test@gmail.com',
+        platform_name: 'Google',
+        account_name: 'test@gmail.com',
         password: 'wertyuvbnm000',
         password_id: '2',
       },
       {
-        platform: 'Github',
-        username: 'test10@gmail.com',
+        platform_name: 'Github',
+        account_name: 'test10@gmail.com',
         password: 'ikdyuvbnm520',
         password_id: '3'
       },
       {
-        platform: 'Facebook',
-        username: 'test@gmail.com',
+        platform_name: 'Facebook',
+        account_name: 'test@gmail.com',
         password: 'wertyuvbnm567',
         password_id: '4'
       },
       {
-        platform: 'Google',
-        username: 'test000@gmail.com',
+        platform_name: 'Google',
+        account_name: 'test000@gmail.com',
         password: '7h8yuvbnm56hl',
         password_id: '5'
       },
       {
-        platform: 'Google',
-        username: 'test011@gmail.com',
+        platform_name: 'Google',
+        account_name: 'test011@gmail.com',
         password: '7h8yuvbnm56hl',
         password_id: '6'
       },
       {
-        platform: 'Google',
-        username: 'test007@gmail.com',
+        platform_name: 'Google',
+        account_name: 'test007@gmail.com',
         password: '7h8yuvbnm087l',
         password_id: '7'
       },
       {
-        platform: 'Google',
-        username: 'test8@gmail.com',
+        platform_name: 'Google',
+        account_name: 'test8@gmail.com',
         password: '7h8yuvbnm56hl',
         password_id: '8'
       },
       {
-        platform: 'Google',
-        username: 'test5@gmail.com',
+        platform_name: 'Google',
+        account_name: 'test5@gmail.com',
         password: '7h8yuvbnm56hl',
         password_id: '9'
       },
       {
-        platform: 'Google',
-        username: 'test1@gmail.com',
+        platform_name: 'Google',
+        account_name: 'test1@gmail.com',
         password: '7h8yuvbnhhihl',
         password_id: '10'
       },
@@ -123,10 +123,10 @@ export default {
     const buttonLoader = ref(false)
 
     const getAllAccounts = () => {
-      API.get("get_all_password")
+      API.get("get_all_passwords")
         .then((res) => {
           // assign data to cards Array
-          cards.value = res.data
+          cards.value = res.passwords
         })
         .catch(() => {
           // show error message
@@ -141,13 +141,6 @@ export default {
       console.log("deleted object ===", object);
       getAllAccounts();
       useToast("Account deleted successfully", "success");
-      
-    //   let indexItem;
-    //   cards.value.filter((ele, index) => {
-    //     ele.password_id == object.cardId
-    //     indexItem = index
-    //   })
-    //   cards.value.splice(indexItem, 1)
     }
 
     const addNewAccount = (payload) => {
@@ -155,7 +148,7 @@ export default {
         .then((res) => {
           console.log("added new object ===", res);
           // add in cards Array,, state updated here
-          cards.value.unshift(payload.cardObj)
+          getAllAccounts();
           useToast(res.message, "success");
         })
         .catch((err) => {
@@ -170,12 +163,7 @@ export default {
 
     function updateAccount(object) {
       console.log("updated object ====", object);
-      // state updated here
-      cards.value.map((element, index) => {
-        if(element.password_id === object.cardId) {
-            cards.value[index] = object.cardObj;
-        }
-      });
+      getAllAccounts();
       useToast("Account updated successfully", "success");  
     }
 
@@ -183,7 +171,7 @@ export default {
       setTimeout(() => {
         loader.value = false
       }, 1000);
-      // getAllAccounts();
+      getAllAccounts();
     });
 
     return {
