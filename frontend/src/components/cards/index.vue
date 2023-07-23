@@ -14,14 +14,18 @@
     @close-delete-popup="deleteRowDialog = false"
     @handle-delete="deleteAccount"
   />
-  <div class="w-100">
+  
+  <!-- For Desktop Web Screen -->
+  <div v-if="$vuetify.display.mdAndUp" class="w-100">
     <v-card style="width: 90%" height="70" class="mx-auto my-3">
       <div class="d-flex align-center pt-2 px-5">
         <span class="icon-chip">
           <img :src="google" alt="" style="height: 100%" />
         </span>
-        <div class="mx-10" style="width:80px">{{ card.platform }}</div>
-        <div class="mx-10" style="width:170px">{{ card.username }}</div>
+        <div class="mx-10 font-weight-bold" style="width: 80px">
+          {{ card.platform }}
+        </div>
+        <div class="mx-10" style="width: 170px">{{ card.username }}</div>
         <v-text-field
           hide-details
           flat
@@ -48,6 +52,49 @@
       </div>
     </v-card>
   </div>
+
+  <!-- For Tablet and Mobile Screen -->
+  <div v-else class="w-100 px-10">
+    <v-card class="mx-auto my-3">
+      <div class="d-flex justify-space-between">
+        <div class="d-flex">
+          <span class="icon-chip mt-7 mx-4">
+            <img :src="google" alt="" style="height: 100%" />
+          </span>
+          <div class="pt-3">
+            <div class="font-weight-bold">{{ card.platform }}</div>
+            <div class="">{{ card.username }}</div>
+            <v-text-field
+              hide-details
+              flat
+              readonly
+              :value="card.password"
+              :type="password.visible ? 'text' : password.type"
+              :append-inner-icon="password.visible ? 'mdi-eye-off' : 'mdi-eye'"
+              @click:append-inner="password.visible = !password.visible"
+              variant="solo"
+            />
+          </div>
+        </div>
+        <div class="d-flex" :class="$vuetify.display.smAndUp ? 'mt-11' : 'mt-3'">
+          <v-icon
+            icon="mdi-pencil"
+            color="grey-darken-1"
+            class="cursor-pointer"
+            :class="$vuetify.display.smAndUp ? 'mr-3' : 'mr-1'"
+            @click="dialog = true"
+          ></v-icon>
+          <v-icon
+            icon="mdi-delete"
+            color="red"
+            class="mr-4 cursor-pointer"
+            @click="deleteRowDialog = true"
+            outlined
+          ></v-icon>
+        </div>
+      </div>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -68,14 +115,14 @@ export default {
     const dialog = ref(false);
     const deleteRowDialog = ref(false);
     const edit = ref("edit");
-    const buttonLoader = ref(false)
+    const buttonLoader = ref(false);
     const password = ref({
       model: "",
       type: "password",
       visible: false,
     });
     function deleteAccount(object) {
-      console.log('delete payload id >>>', object.cardId)
+      console.log("delete payload id >>>", object.cardId);
 
       API.delete(`delete_password/${object.cardId}`)
         .then((res) => {
@@ -88,12 +135,12 @@ export default {
         })
         .finally(() => {
           deleteRowDialog.value = object.key;
-          buttonLoader.value = false
+          buttonLoader.value = false;
         });
     }
 
     const updateAccount = (payload) => {
-      console.log('get update payload >>>', payload)
+      console.log("get update payload >>>", payload);
 
       API.put(`update_password/${payload.cardId}`, payload.cardObject)
         .then((res) => {
@@ -106,7 +153,7 @@ export default {
         })
         .finally(() => {
           dialog.value = payload.key;
-          buttonLoader.value = false
+          buttonLoader.value = false;
         });
     };
     return {
@@ -124,12 +171,28 @@ export default {
 </script>
 
 <style scoped>
-:deep .v-input__control {
-  width: 300px;
-  background-color: #fbefeb;
-  border-radius: 30px;
+@media screen and (min-width: 959px) {
+  :deep .v-input__control {
+    width: 300px;
+  }
 }
 /* :deep .v-field__input {
   color: orangered;
 } */
+
+@media screen and (max-width: 959px) {
+  :deep .v-field__input {
+    padding-inline-start: 0;
+    padding-inline-end: 0;
+    padding-top: 0;
+    height: 40px;
+  }
+  :deep .v-input__control {
+    width: 200px;
+  }
+  :deep .v-field__append-inner {
+    align-items: unset;
+    padding-top: 10px;
+  }
+}
 </style>
