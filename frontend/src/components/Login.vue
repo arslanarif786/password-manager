@@ -92,11 +92,10 @@
   <script>
   import { ref } from "vue";
   import rules from "@/constants/validation-rules.js"
-  import API from "@/services/API"
+  import axios from "axios";
   import { useRoute } from "vue-router"
   import { useRouter } from "vue-router"
   import useToast from '@/plugins/useToast.js'
-import { load } from "webfontloader";
   export default {
     setup() {
       const loader = ref(false)
@@ -151,20 +150,40 @@ import { load } from "webfontloader";
           password: inputList.value[1].model
         }
         console.log('ready login payload ==============', payload)
-        API.post("login", payload)
-          .then((response) => {
-            // set TOKEN localinto  storage 
-            localStorage.setItem('token', JSON.stringify(response.token))
-            // show success message in the snackbar
-            useToast(response.message, "success")
-            // route to dashboard page
-            router.push({path: "/dashboard"});
+
+        const appBaseURL = import.meta.env.VITE_API_URL
+
+        let config = {
+          method: 'post',
+          maxBodyLength: Infinity,
+          url: `${appBaseURL}login`,
+          headers: { 
+            'Content-Type': 'application/json'
+          },
+          data : payload
+        };
+
+        axios.request(config)
+        .then((response) => {
+          if(response.data.message == 'Login successful')
+            {
+              // set TOKEN localinto  storage 
+              localStorage.setItem('token', JSON.stringify(response.data.token))
+              // show success message in the snackbar
+              useToast(response.data.message, "success")
+              // route to dashboard page
+              router.push({path: "/dashboard"});
+            }
+            else {
+              console.log(response);
+              useToast(response.data.message, "error");
+            }
           })
-          .catch((error) => {
+        .catch((error) => {
             // show error message in the snackbar
             useToast(error.message, "error")
           })
-          .finally(() => {
+        .finally(() => {
             loader.value = false
           })
       }

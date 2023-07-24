@@ -103,7 +103,6 @@ import Dialog from "../dialog/index.vue";
 import axios from "axios";
 import DeleteAccount from "../DeleteCard.vue";
 import google from "@/assets/images/google.png";
-import API from "@/services/API";
 import useToast from "@/plugins/useToast.js";
 
 export default {
@@ -125,10 +124,31 @@ export default {
     function deleteAccount(object) {
       console.log('delete payload id >>>', object.cardId)
 
-      API.delete(`delete_password/?password_id=${object.cardId}`)
+      const token = JSON.parse(localStorage.getItem('token'))
+      const appBaseURL = import.meta.env.VITE_API_URL
+
+        let config = {
+          method: 'delete',
+          maxBodyLength: Infinity,
+          url: `${appBaseURL}delete_password/?password_id=${object.cardId}`,
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+
+          }
+        };
+
+        axios.request(config)
         .then((res) => {
-          // update cards array after deletion
-          emit("delete-card", object.cardId);
+          if(res.data.message == 'Password entry deleted successfully')
+          {
+            // update cards array after deletion
+            emit("delete-card", object.cardId);
+          }
+          else {
+            console.log(res);
+            useToast(res.data.message, "error");
+          }
         })
         .catch((err) => {
           // show error message
@@ -160,11 +180,18 @@ export default {
         axios.request(config)
         .then((response) => {
           console.log(JSON.stringify(response.data));
-          emit("update-card", payload)
+          if(response.data.message == 'Password entry updated successfully')
+          {
+            emit("update-card", payload)
+          }
+          else {
+            console.log(response);
+            useToast(response.data.message, "error");
+          }
         })
         .catch((error) => {
           console.log(error);
-          useToast(error, "error");
+          useToast(error.message, "error");
         })
         .finally(() => {
           dialog.value = payload.key;

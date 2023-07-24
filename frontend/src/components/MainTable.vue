@@ -28,12 +28,22 @@
     ></v-progress-circular>
   </div>
   <div v-else>
-    <div v-for="(item, index) in cards" :key="index" class="d-flex">
-      <Card
-        :card="item"
-        @delete-card="deleteAccount"
-        @update-card="updateAccount"
-      />
+    <div
+      v-if="!cards.length"
+      class="txt32 font-weight-medium"
+      style="height:60vh">
+      <div class="not-found ">
+        Data not exists 
+      </div>
+    </div>
+    <div v-else>
+      <div v-for="(item, index) in cards" :key="index" class="d-flex">
+        <Card
+          :card="item"
+          @delete-card="deleteAccount"
+          @update-card="updateAccount"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -42,7 +52,7 @@
 import Card from "../components/cards/index.vue";
 import Dialog from "../components/dialog/index.vue";
 import { ref } from "vue";
-import API from "../services/API";
+import axios from "axios";
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";
 import useToast from "@/plugins/useToast.js";
@@ -53,68 +63,7 @@ export default {
     Dialog
   },
   setup() {
-    const cards = ref([
-      {
-        platform_name: 'Google',
-        account_name: 'ahmad2@gmail.com',
-        password: 'wertyuvbnm567',
-        password_id: '1',
-      },
-      {
-        platform_name: 'Google',
-        account_name: 'test@gmail.com',
-        password: 'wertyuvbnm000',
-        password_id: '2',
-      },
-      {
-        platform_name: 'Github',
-        account_name: 'test10@gmail.com',
-        password: 'ikdyuvbnm520',
-        password_id: '3'
-      },
-      {
-        platform_name: 'Facebook',
-        account_name: 'test@gmail.com',
-        password: 'wertyuvbnm567',
-        password_id: '4'
-      },
-      {
-        platform_name: 'Google',
-        account_name: 'test000@gmail.com',
-        password: '7h8yuvbnm56hl',
-        password_id: '5'
-      },
-      {
-        platform_name: 'Google',
-        account_name: 'test011@gmail.com',
-        password: '7h8yuvbnm56hl',
-        password_id: '6'
-      },
-      {
-        platform_name: 'Google',
-        account_name: 'test007@gmail.com',
-        password: '7h8yuvbnm087l',
-        password_id: '7'
-      },
-      {
-        platform_name: 'Google',
-        account_name: 'test8@gmail.com',
-        password: '7h8yuvbnm56hl',
-        password_id: '8'
-      },
-      {
-        platform_name: 'Google',
-        account_name: 'test5@gmail.com',
-        password: '7h8yuvbnm56hl',
-        password_id: '9'
-      },
-      {
-        platform_name: 'Google',
-        account_name: 'test1@gmail.com',
-        password: '7h8yuvbnhhihl',
-        password_id: '10'
-      },
-    ]);
+    const cards = ref([])
     const loader = ref(true);
     const route = useRoute();
     const router = useRouter();
@@ -123,18 +72,39 @@ export default {
     const buttonLoader = ref(false)
 
     const getAllAccounts = () => {
-      API.get("get_all_passwords")
-        .then((res) => {
-          // assign data to cards Array
-          cards.value = res.passwords
+      const token = JSON.parse(localStorage.getItem('token'))
+      const appBaseURL = import.meta.env.VITE_API_URL
+
+        let config = {
+          method: 'get',
+          maxBodyLength: Infinity,
+          url: `${appBaseURL}get_all_passwords`,
+          headers: { 
+            'Content-Type': 'application/json', 
+            'Authorization': `Bearer ${token}`,
+          },
+        };
+
+        axios.request(config)
+        .then((response) => {
+          console.log(JSON.stringify(response));
+          cards.value = response?.data?.passwords
+          if(response?.data?.message == 'Passwords successfully get')
+          {
+            console.log(response?.data?.message);
+          }
+          else {
+            console.log(response);
+            useToast(response?.data?.message, "error");
+          }
         })
-        .catch(() => {
-          // show error message
+        .catch((error) => {
+          console.log(error);
           useToast(error?.message ? error.message : "Something went wrong", "error");
         })
         .finally(() => {
-          loader.value = false;
-        });
+          loader.value = false
+      });
     };
 
     function deleteAccount(object) {
@@ -144,21 +114,43 @@ export default {
     }
 
     const addNewAccount = (payload) => {
-      API.post(`create_password`, payload.cardObj)
-        .then((res) => {
-          console.log("added new object ===", res);
-          // add in cards Array,, state updated here
-          getAllAccounts();
-          useToast(res.message, "success");
+      console.log('get update payload >>>', payload.cardObj)
+      let data = JSON.stringify(payload.cardObj);
+      const token = JSON.parse(localStorage.getItem('token'))
+      const appBaseURL = import.meta.env.VITE_API_URL
+
+        let config = {
+          method: 'post',
+          maxBodyLength: Infinity,
+          url: `${appBaseURL}create_password`,
+          headers: { 
+            'Content-Type': 'application/json', 
+            'Authorization': `Bearer ${token}`,
+          },
+          data : data
+        };
+
+        axios.request(config)
+        .then((response) => {
+          console.log(JSON.stringify(response));
+          if(response.data.message == 'Password entry created successfully')
+          {
+            getAllAccounts();
+            useToast(response.data.message, "success");
+          }
+          else {
+            console.log(response);
+            useToast(response?.data?.message ? response?.data?.message : "New account did not add", "error");
+          }
         })
-        .catch((err) => {
-          // show error message
+        .catch((error) => {
+          console.log(error);
           useToast(err?.message ? err?.message : "New account did not add", "error");
         })
         .finally(() => {
           dialog.value = payload.key;
           buttonLoader.value = false
-        });
+      });
     };
 
     function updateAccount(object) {
@@ -192,3 +184,10 @@ export default {
   methods: {},
 };
 </script>
+<style scoped>
+.not-found {
+  position: absolute;
+  top: 50%; right: 50%;
+  transform: translate(50%,-50%)
+}
+</style>
