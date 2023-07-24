@@ -226,10 +226,17 @@
 
         API.post("create_account", payload)
           .then((res) => {
-            // show success message in snackbar
-            useToast(res.message, "success")
-            // route to login page
-            router.push({path: "/login"});
+            if(res.message == 'Account created successfully')
+            {
+              // show success message in snackbar
+              useToast(res.message, "success")
+              // route to login page
+              router.push({path: "/login"});
+            }
+            else {
+              console.log(res);
+              useToast(res.message, "error");
+            }
           })
           .catch((error) => {
             // show error message

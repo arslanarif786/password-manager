@@ -153,12 +153,19 @@ import { load } from "webfontloader";
         console.log('ready login payload ==============', payload)
         API.post("login", payload)
           .then((response) => {
-            // set TOKEN localinto  storage 
-            localStorage.setItem('token', JSON.stringify(response.token))
-            // show success message in the snackbar
-            useToast(response.message, "success")
-            // route to dashboard page
-            router.push({path: "/dashboard"});
+            if(response.message == 'Login successful')
+            {
+              // set TOKEN localinto  storage 
+              localStorage.setItem('token', JSON.stringify(response.token))
+              // show success message in the snackbar
+              useToast(response.message, "success")
+              // route to dashboard page
+              router.push({path: "/dashboard"});
+            }
+            else {
+              console.log(response);
+              useToast(response.message, "error");
+            }
           })
           .catch((error) => {
             // show error message in the snackbar

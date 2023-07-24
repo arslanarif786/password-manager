@@ -127,8 +127,15 @@ export default {
 
       API.delete(`delete_password/?password_id=${object.cardId}`)
         .then((res) => {
-          // update cards array after deletion
-          emit("delete-card", object.cardId);
+          if(res.message == 'Password entry deleted successfully')
+          {
+            // update cards array after deletion
+            emit("delete-card", object.cardId);
+          }
+          else {
+            console.log(res);
+            useToast(res.message, "error");
+          }
         })
         .catch((err) => {
           // show error message
@@ -160,11 +167,18 @@ export default {
         axios.request(config)
         .then((response) => {
           console.log(JSON.stringify(response.data));
-          emit("update-card", payload)
+          if(response.message == 'Password entry updated successfully')
+          {
+            emit("update-card", payload)
+          }
+          else {
+            console.log(response);
+            useToast(response.message, "error");
+          }
         })
         .catch((error) => {
           console.log(error);
-          useToast(error, "error");
+          useToast(error.message, "error");
         })
         .finally(() => {
           dialog.value = payload.key;
