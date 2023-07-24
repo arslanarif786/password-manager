@@ -52,7 +52,6 @@
 import Card from "../components/cards/index.vue";
 import Dialog from "../components/dialog/index.vue";
 import { ref } from "vue";
-import API from "../services/API";
 import axios from "axios";
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";

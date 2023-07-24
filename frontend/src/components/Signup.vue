@@ -113,7 +113,7 @@
   <script>
   import { ref } from "vue"
   import rules from "../constants/validation-rules.js"
-  import API from "../services/API"
+
   import { useRoute } from "vue-router"
   import { useRouter } from "vue-router"
   import useToast from '@/plugins/useToast.js'
@@ -224,9 +224,21 @@
         }
         console.log('ready signup payload ==============', payload)
 
-        API.post("create_account", payload)
-          .then((res) => {
-            if(res.message == 'Account created successfully')
+        const appBaseURL = import.meta.env.VITE_API_URL
+
+        let config = {
+          method: 'post',
+          maxBodyLength: Infinity,
+          url: `${appBaseURL}create_account`,
+          headers: { 
+            'Content-Type': 'application/json'
+          },
+          data : payload
+        };
+
+        axios.request(config)
+        .then((res) => {
+          if(res.message == 'Account created successfully')
             {
               // show success message in snackbar
               useToast(res.message, "success")
@@ -238,11 +250,11 @@
               useToast(res.message, "error");
             }
           })
-          .catch((error) => {
+        .catch((error) => {
             // show error message
             useToast(error.messae, "error")
           })
-          .finally(() => {
+        .finally(() => {
             loader.value = false
           })
       }

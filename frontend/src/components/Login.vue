@@ -92,11 +92,10 @@
   <script>
   import { ref } from "vue";
   import rules from "@/constants/validation-rules.js"
-  import API from "@/services/API"
+  import axios from "axios";
   import { useRoute } from "vue-router"
   import { useRouter } from "vue-router"
   import useToast from '@/plugins/useToast.js'
-import { load } from "webfontloader";
   export default {
     setup() {
       const loader = ref(false)
@@ -151,9 +150,23 @@ import { load } from "webfontloader";
           password: inputList.value[1].model
         }
         console.log('ready login payload ==============', payload)
-        API.post("login", payload)
-          .then((response) => {
-            if(response.message == 'Login successful')
+
+        const appBaseURL = import.meta.env.VITE_API_URL
+
+        let config = {
+          method: 'post',
+          maxBodyLength: Infinity,
+          url: `${appBaseURLA}login`,
+          headers: { 
+            'Content-Type': 'application/json'
+          },
+          data : payload
+        };
+
+        axios.request(config)
+        .then((response) => {
+          console.log(JSON.stringify(response.data));
+          if(response.message == 'Login successful')
             {
               // set TOKEN localinto  storage 
               localStorage.setItem('token', JSON.stringify(response.token))
@@ -167,11 +180,11 @@ import { load } from "webfontloader";
               useToast(response.message, "error");
             }
           })
-          .catch((error) => {
+        .catch((error) => {
             // show error message in the snackbar
             useToast(error.message, "error")
           })
-          .finally(() => {
+        .finally(() => {
             loader.value = false
           })
       }

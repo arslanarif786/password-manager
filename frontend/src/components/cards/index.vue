@@ -103,7 +103,6 @@ import Dialog from "../dialog/index.vue";
 import axios from "axios";
 import DeleteAccount from "../DeleteCard.vue";
 import google from "@/assets/images/google.png";
-import API from "@/services/API";
 import useToast from "@/plugins/useToast.js";
 
 export default {
@@ -125,7 +124,22 @@ export default {
     function deleteAccount(object) {
       console.log('delete payload id >>>', object.cardId)
 
-      API.delete(`delete_password/?password_id=${object.cardId}`)
+      const token = JSON.parse(localStorage.getItem('token'))
+      const appBaseURL = import.meta.env.VITE_API_URL
+
+        let config = {
+          method: 'delete',
+          maxBodyLength: Infinity,
+          url: `${appBaseURL}delete_password/?password_id=${object.cardId}`,
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+
+          },
+          data : payload
+        };
+
+        axios.request(config)
         .then((res) => {
           if(res.message == 'Password entry deleted successfully')
           {
