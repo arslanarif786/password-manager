@@ -1,8 +1,8 @@
 import mysql.connector
 import uuid
 
-DB_HOST = '192.168.100.38'
-DB_USER = 'test2'
+DB_HOST = '192.168.10.17'
+DB_USER = 'test'
 DB_PASSWORD = '123'
 DB_NAME = 'password manager'
 

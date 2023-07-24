@@ -88,15 +88,14 @@ export default {
         axios.request(config)
         .then((response) => {
           console.log(JSON.stringify(response));
-          cards.value = response.data.passwords
-          if(response.data.message == 'Passwords successfully get')
+          cards.value = response?.data?.passwords
+          if(response?.data?.message == 'Passwords successfully get')
           {
-            getAllAccounts();
-            useToast(response.data.message, "success");
+            console.log(response?.data?.message);
           }
           else {
             console.log(response);
-            useToast(response.data.message, "error");
+            useToast(response?.data?.message, "error");
           }
         })
         .catch((error) => {
@@ -134,14 +133,14 @@ export default {
         axios.request(config)
         .then((response) => {
           console.log(JSON.stringify(response));
-          if(response.message == 'Password entry created successfully')
+          if(response.data.message == 'Password entry created successfully')
           {
             getAllAccounts();
-            useToast(response.message, "success");
+            useToast(response.data.message, "success");
           }
           else {
             console.log(response);
-            useToast(response?.message ? response?.message : "New account did not add", "error");
+            useToast(response?.data?.message ? response?.data?.message : "New account did not add", "error");
           }
         })
         .catch((error) => {

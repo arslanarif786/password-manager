@@ -135,20 +135,19 @@ export default {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
 
-          },
-          data : payload
+          }
         };
 
         axios.request(config)
         .then((res) => {
-          if(res.message == 'Password entry deleted successfully')
+          if(res.data.message == 'Password entry deleted successfully')
           {
             // update cards array after deletion
             emit("delete-card", object.cardId);
           }
           else {
             console.log(res);
-            useToast(res.message, "error");
+            useToast(res.data.message, "error");
           }
         })
         .catch((err) => {
@@ -181,13 +180,13 @@ export default {
         axios.request(config)
         .then((response) => {
           console.log(JSON.stringify(response.data));
-          if(response.message == 'Password entry updated successfully')
+          if(response.data.message == 'Password entry updated successfully')
           {
             emit("update-card", payload)
           }
           else {
             console.log(response);
-            useToast(response.message, "error");
+            useToast(response.data.message, "error");
           }
         })
         .catch((error) => {

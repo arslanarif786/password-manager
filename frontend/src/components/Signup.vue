@@ -117,6 +117,7 @@
   import { useRoute } from "vue-router"
   import { useRouter } from "vue-router"
   import useToast from '@/plugins/useToast.js'
+  import axios from "axios"
   export default {
     setup() {
       const loader = ref(false)
@@ -238,16 +239,16 @@
 
         axios.request(config)
         .then((res) => {
-          if(res.message == 'Account created successfully')
+          if(res.data.message == 'Account created successfully')
             {
               // show success message in snackbar
-              useToast(res.message, "success")
+              useToast(res.data.message, "success")
               // route to login page
               router.push({path: "/login"});
             }
             else {
               console.log(res);
-              useToast(res.message, "error");
+              useToast(res.data.message, "error");
             }
           })
         .catch((error) => {

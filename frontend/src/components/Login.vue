@@ -156,7 +156,7 @@
         let config = {
           method: 'post',
           maxBodyLength: Infinity,
-          url: `${appBaseURLA}login`,
+          url: `${appBaseURL}login`,
           headers: { 
             'Content-Type': 'application/json'
           },
@@ -165,19 +165,18 @@
 
         axios.request(config)
         .then((response) => {
-          console.log(JSON.stringify(response.data));
-          if(response.message == 'Login successful')
+          if(response.data.message == 'Login successful')
             {
               // set TOKEN localinto  storage 
-              localStorage.setItem('token', JSON.stringify(response.token))
+              localStorage.setItem('token', JSON.stringify(response.data.token))
               // show success message in the snackbar
-              useToast(response.message, "success")
+              useToast(response.data.message, "success")
               // route to dashboard page
               router.push({path: "/dashboard"});
             }
             else {
               console.log(response);
-              useToast(response.message, "error");
+              useToast(response.data.message, "error");
             }
           })
         .catch((error) => {

@@ -40,11 +40,14 @@
 
 <script setup>
 import { useRouter } from "vue-router";
+import useToast from '@/plugins/useToast.js'
 const router = useRouter();
 
 const logout = () => {
   localStorage.clear();
+  useToast("Logout successfully", "success");
   router.push({ path: "/" });
+  useT
 };
 </script>
 

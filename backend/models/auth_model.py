@@ -5,8 +5,8 @@ import uuid
 SECRET_KEY = '_ASDGlZL-7iu8cu55x6klmdLIh4NFKtNTv0kuEaZ8uA='
 
 # Define your SECRET_KEY, DB_HOST, DB_USER, DB_PASSWORD, and DB_NAME here
-DB_HOST = '192.168.100.38'
-DB_USER = 'test2'
+DB_HOST = '192.168.10.17'
+DB_USER = 'test'
 DB_PASSWORD = '123'
 DB_NAME = 'password manager'
 
