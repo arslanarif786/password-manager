@@ -98,7 +98,7 @@ def get_passwords_for_user(user_id):
             }
             password_list.append(password_dict)
 
-        return {'passwords': password_list}, 200
+        return {'passwords': password_list, 'message': 'Passwords successfully get'}, 200
 
     except mysql.connector.Error as e:
         print(f"Database error: {e}")
