@@ -4,7 +4,7 @@ import uuid
 DB_HOST = '192.168.10.17'
 DB_USER = 'test'
 DB_PASSWORD = '123'
-DB_NAME = 'password manager'
+DB_NAME = 'password_manager'
 
 # Database connection setup
 def get_db_connection():

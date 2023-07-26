@@ -99,10 +99,7 @@ def after_request(response):
 
     # Allow requests from both frontend origin and backend origin
     request_origin = request.headers.get('Origin')
-    allowed_origins = ['http://localhost:3000', 'http://127.0.0.1:7000']
-    if request_origin in allowed_origins:
-        response.headers['Access-Control-Allow-Origin'] = request_origin
-
+    response.headers['Access-Control-Allow-Origin'] = request_origin
     # Set the HTTP status code to 200 OK
     response.status_code = 200
 

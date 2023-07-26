@@ -8,7 +8,7 @@ SECRET_KEY = '_ASDGlZL-7iu8cu55x6klmdLIh4NFKtNTv0kuEaZ8uA='
 DB_HOST = '192.168.10.17'
 DB_USER = 'test'
 DB_PASSWORD = '123'
-DB_NAME = 'password manager'
+DB_NAME = 'password_manager'
 
 # Database connection setup
 def get_db_connection():
